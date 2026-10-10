@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17231f">
+  <meta name="description" content="Десять маленьких миров и одно большое письмо, сделанное специально для тебя.">
+  <title>Тебе. — десять маленьких миров</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: dark; --ink:#fffaf1; --muted:rgba(255,250,241,.75); --accent:#f3c78e; --serif:"Playfair Display",Georgia,serif; --sans:"DM Sans","Segoe UI",sans-serif; --ease:cubic-bezier(.2,.8,.2,1); --travel:1800ms; }
+    * { box-sizing:border-box; }
+    html,body { width:100%;height:100%;margin:0; }
+    body { overflow:hidden;background:#17231f;color:var(--ink);font-family:var(--sans); }
+    button { color:inherit;font:inherit; }
+    button:focus-visible { outline:2px solid var(--accent);outline-offset:5px; }
+    .stage { position:relative;isolation:isolate;width:100%;height:100svh;min-height:580px;overflow:hidden;background:#17231f; }
+    .backdrop { position:absolute;z-index:-3;inset:0;overflow:hidden;background:#17231f; }
+    .backdrop::after { content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(12,19,17,.78),rgba(12,19,17,.42) 58%,rgba(12,19,17,.15)),linear-gradient(0deg,rgba(12,19,17,.34),transparent 45%);transition:background 700ms ease; }
+    .backdrop img { width:100%;height:100%;object-fit:cover;transform:scale(1.04);transition:opacity 700ms ease,transform 4s var(--ease); }
+    .backdrop img.is-changing { opacity:.25;transform:scale(1.14); }
+    .grain { position:absolute;z-index:-1;inset:0;pointer-events:none;opacity:.075;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E"); }
+    .topbar { position:absolute;z-index:5;inset:0 0 auto;display:flex;justify-content:space-between;align-items:center;padding:28px 5.2vw; }
+    .wordmark { display:flex;align-items:center;gap:11px;font-size:12px;letter-spacing:2px;text-transform:uppercase; }
+    .wordmark__star { color:var(--accent);font-size:17px;animation:star-turn var(--travel) linear infinite; }
+    .topbar__note { color:var(--muted);font-size:12px;letter-spacing:.5px; }
+    .chapter { position:absolute;z-index:2;inset:0;display:grid;align-items:center;padding:100px 12vw 110px;opacity:1;transition:opacity 350ms ease,transform 600ms var(--ease),filter 500ms ease; }
+    .chapter.is-leaving { opacity:0;filter:blur(12px);transform:scale(.92) translateY(-12px); }
+    .chapter__content { width:min(720px,100%); }
+    .chapter__content.is-arriving { animation:arrive var(--travel) var(--ease) both; }
+    .eyebrow { display:flex;align-items:center;gap:13px;margin:0 0 26px;color:var(--accent);font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase; }
+    .eyebrow::before { content:"";width:33px;height:1px;background:currentColor; }
+    h1 { margin:0;font-family:var(--serif);font-size:72px;line-height:1.06;font-weight:400;letter-spacing:0;text-wrap:balance;text-shadow:0 3px 30px rgba(0,0,0,.14); }
+    h1 em { color:var(--accent);font-weight:400; }
+    .chapter__copy { max-width:590px;margin:25px 0 0;color:var(--muted);font-size:17px;line-height:1.85; }
+    .chapter__copy + .chapter__copy { margin-top:14px; }
+    .chapter__signature { margin:25px 0 0;color:var(--accent);font-family:var(--serif);font-size:23px;font-style:italic; }
+    .chapter--intro { padding-left:14vw; }
+    .chapter--intro h1 { max-width:800px;font-size:82px; }
+    .chapter--intro .chapter__copy { max-width:470px; }
+    .chapter--center { justify-items:center;text-align:center; }
+    .chapter--center .chapter__content { display:flex;align-items:center;flex-direction:column; }
+    .chapter--center .eyebrow { justify-content:center; }
+    .chapter--center h1 { max-width:850px; }
+    .chapter--center .chapter__copy { max-width:570px; }
+    .chapter--letter .chapter__content { width:min(670px,100%);padding:34px 40px;border:1px solid rgba(255,242,216,.22);background:rgba(34,29,24,.25);backdrop-filter:blur(8px); }
+    .chapter--letter h1 { font-size:59px; }
+    .chapter--letter .chapter__copy { color:rgba(255,250,241,.86); }
+    .chapter--split { padding-left:10vw; }
+    .chapter--split .chapter__content { width:min(600px,58%); }
+    .chapter--split h1 { font-size:66px; }
+    .chapter--final h1 { font-size:74px; }
+    .ornament { position:absolute;z-index:-1;right:11%;top:50%;width:270px;aspect-ratio:1;border:1px solid rgba(255,248,229,.25);transform:translateY(-50%);animation:orbit var(--travel) linear infinite; }
+    .ornament::before,.ornament::after { content:"";position:absolute;inset:18px;border:1px solid rgba(255,248,229,.2); }
+    .ornament::after { inset:48px;opacity:.7; }
+    .ornament__dot { position:absolute;top:50%;left:-4px;width:8px;height:8px;background:var(--accent);box-shadow:0 0 24px var(--accent); }
+    .chapter--garden .ornament__dot { background:#d5e6a8;box-shadow:0 0 26px #d5e6a8; }
+    .chapter--sea .ornament { right:8%;width:340px;border-style:dashed; }
+    .chapter--city .ornament { width:210px; }
+    .chapter--ending .ornament { width:310px;box-shadow:0 0 90px rgba(255,211,145,.1); }
+    .actions { display:flex;align-items:center;gap:12px;margin-top:34px; }
+    .button { display:inline-flex;min-height:49px;align-items:center;justify-content:center;gap:12px;padding:0 19px;border:1px solid rgba(255,250,241,.48);background:transparent;color:var(--ink);cursor:pointer;font-size:12px;transition:background 220ms ease,border-color 220ms ease,transform 220ms ease; }
+    .button:hover { transform:translateY(-2px);border-color:var(--accent); }
+    .button--primary { border-color:var(--accent);background:var(--accent);color:#30251c;font-weight:700; }
+    .button--primary:hover { background:#ffe0b4; }
+    .button__arrow { font-size:18px;transition:transform 220ms ease; }
+    .button--primary:hover .button__arrow { transform:translateX(4px); }
+    .button--quiet { min-height:40px;padding:0 12px;border-color:transparent;color:var(--muted); }
+    .bottom { position:absolute;z-index:5;inset:auto 0 0;display:flex;align-items:center;justify-content:space-between;padding:22px 5.2vw 26px; }
+    .progress { display:flex;align-items:center;gap:8px; }
+    .progress__step { position:relative;width:21px;height:21px;padding:0;border:0;background:transparent;cursor:pointer; }
+    .progress__step::after { content:"";position:absolute;top:9px;left:2px;width:17px;height:2px;background:rgba(255,250,241,.32);transition:background 300ms ease,transform 300ms ease; }
+    .progress__step.is-done::after,.progress__step.is-current::after { background:var(--accent); }
+    .progress__step.is-current::after { transform:scaleY(2.5); }
+    .counter { display:flex;align-items:baseline;gap:5px;color:var(--muted);font-size:11px;letter-spacing:1px; }
+    .counter strong { color:var(--ink);font-family:var(--serif);font-size:18px;font-weight:400; }
+    .keyboard-hint { color:rgba(255,250,241,.58);font-size:10px;letter-spacing:.5px; }
+    .stage[data-chapter="2"] { --accent:#d9e8ad; }
+    .stage[data-chapter="3"] { --accent:#e9c3a0; }
+    .stage[data-chapter="4"] { --accent:#efc488; }
+    .stage[data-chapter="5"] { --accent:#bbe2df; }
+    .stage[data-chapter="6"] { --accent:#e4b6c6; }
+    .stage[data-chapter="7"] { --accent:#e9bd9b; }
+    .stage[data-chapter="8"] { --accent:#f3be91; }
+    .stage[data-chapter="9"] { --accent:#c7c0ed; }
+    .stage[data-chapter="10"] { --accent:#ffe1a5; }
+    .stage[data-chapter="2"] .backdrop::after { background:linear-gradient(90deg,rgba(20,34,22,.78),rgba(20,34,22,.35) 58%,rgba(20,34,22,.08)),linear-gradient(0deg,rgba(20,34,22,.35),transparent 40%); }
+    .stage[data-chapter="3"] .backdrop::after { background:linear-gradient(90deg,rgba(38,27,21,.83),rgba(38,27,21,.49) 58%,rgba(38,27,21,.16)),linear-gradient(0deg,rgba(28,20,17,.44),transparent 45%); }
+    .stage[data-chapter="4"] .backdrop::after { background:linear-gradient(90deg,rgba(18,21,30,.87),rgba(18,21,30,.46) 58%,rgba(18,21,30,.18)),linear-gradient(0deg,rgba(18,21,30,.42),transparent 46%); }
+    .stage[data-chapter="5"] .backdrop::after { background:linear-gradient(90deg,rgba(15,37,43,.83),rgba(15,37,43,.39) 60%,rgba(15,37,43,.12)),linear-gradient(0deg,rgba(15,37,43,.38),transparent 45%); }
+    .stage[data-chapter="6"] .backdrop::after { background:linear-gradient(90deg,rgba(47,25,39,.8),rgba(47,25,39,.43) 58%,rgba(47,25,39,.15)),linear-gradient(0deg,rgba(47,25,39,.35),transparent 45%); }
+    .stage[data-chapter="7"] .backdrop::after { background:linear-gradient(90deg,rgba(46,29,24,.84),rgba(46,29,24,.48) 58%,rgba(46,29,24,.17)),linear-gradient(0deg,rgba(46,29,24,.45),transparent 44%); }
+    .stage[data-chapter="8"] .backdrop::after { background:linear-gradient(90deg,rgba(35,24,28,.86),rgba(35,24,28,.47) 58%,rgba(35,24,28,.17)),linear-gradient(0deg,rgba(35,24,28,.42),transparent 45%); }
+    .stage[data-chapter="9"] .backdrop::after { background:linear-gradient(90deg,rgba(20,22,47,.87),rgba(20,22,47,.45) 58%,rgba(20,22,47,.16)),linear-gradient(0deg,rgba(20,22,47,.4),transparent 44%); }
+    .stage[data-chapter="10"] .backdrop::after { background:linear-gradient(90deg,rgba(44,34,29,.77),rgba(44,34,29,.35) 58%,rgba(44,34,29,.08)),linear-gradient(0deg,rgba(44,34,29,.35),transparent 42%); }
+    .fx { position:absolute;z-index:4;inset:0;overflow:hidden;visibility:hidden;pointer-events:none;perspective:1000px; }
+    .stage.is-transitioning .fx { visibility:visible; }
+    .stage.is-transitioning .fx,.stage.is-transitioning .fx *,.stage.is-transitioning .fx *::before,.stage.is-transitioning .fx *::after { animation-duration:var(--travel)!important; }
+    .fx__field { position:absolute;inset:0;opacity:0; }
+    .fx__flash { position:absolute;z-index:3;inset:0;background:#fff;opacity:0; }
+    .fx__portal { position:absolute;z-index:2;inset:0;display:grid;place-items:center;visibility:hidden; }
+    .fx__portal-window { position:relative;width:min(74vmin,680px);aspect-ratio:1;overflow:hidden;border:clamp(5px,1.1vw,11px) solid #9cff71;background:#102719;box-shadow:0 0 0 1px rgba(237,255,207,.9),inset 0 0 26px rgba(184,255,111,.85),0 0 32px #71ff4d,0 0 110px rgba(82,255,85,.72);opacity:0;transform:scale(.025) rotate(-16deg);will-change:transform,opacity; }
+    .fx__portal-window::before { content:"";position:absolute;z-index:2;inset:0;border:2px solid rgba(240,255,207,.96);box-shadow:inset 0 0 20px rgba(221,255,165,.75);pointer-events:none; }
+    .fx__portal-vortex { position:absolute;inset:-28%;background:conic-gradient(from 0deg at 50% 50%,#d3ff72 0deg,#176b36 42deg,#88f050 82deg,#10472d 128deg,#baff54 181deg,#14653a 226deg,#dcff75 275deg,#176b36 319deg,#d3ff72 360deg),repeating-conic-gradient(from 5deg at 50% 50%,rgba(245,255,205,.35) 0deg 3deg,transparent 5deg 19deg);background-blend-mode:screen,multiply;filter:saturate(1.4) contrast(1.18); }
+    .fx__portal-vortex::before { content:"";position:absolute;inset:8%;background:repeating-conic-gradient(from 15deg at 50% 50%,#caff70 0deg 9deg,#17683a 13deg 28deg,#73eb48 34deg 39deg,#16482e 48deg 67deg);clip-path:polygon(50% 0,61% 38%,100% 50%,61% 62%,50% 100%,39% 62%,0 50%,39% 38%);mix-blend-mode:screen;opacity:.88; }
+    .fx__portal-vortex::after { content:"";position:absolute;inset:23%;background:conic-gradient(from 60deg,#e6ff9b,#1d8b44,#a3fa54,#0d5935,#ddff83,#287e3e,#e6ff9b);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);mix-blend-mode:screen;opacity:.82; }
+    .fx__portal-core { position:absolute;z-index:1;top:50%;left:50%;width:13%;aspect-ratio:1;border:1px solid rgba(230,255,174,.95);background:conic-gradient(#102719,#bcff62,#145a34,#d9ff7a,#102719);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);box-shadow:0 0 26px #b8ff68,0 0 70px rgba(112,255,87,.9);transform:translate(-50%,-50%) rotate(45deg); }
+    .fx__tiles { position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr); }
+    .fx__tile { opacity:0;will-change:transform,opacity; }
+    .stage.is-transitioning[data-effect="speed"] .fx__field { background:repeating-conic-gradient(from 0deg at 50% 50%,transparent 0deg 5deg,rgba(247,236,205,.9) 5.4deg 5.9deg,transparent 6.2deg 12deg);animation:tunnel-run 4000ms cubic-bezier(.2,.8,.2,1) both; }
+    .stage.is-transitioning[data-effect="speed"] .fx__flash { background:conic-gradient(from 0deg at 50% 50%,transparent 0deg 24deg,rgba(255,247,211,.54) 25deg 28deg,transparent 29deg 68deg,rgba(255,226,174,.34) 69deg 72deg,transparent 73deg 114deg,rgba(255,247,211,.5) 115deg 118deg,transparent 119deg 204deg,rgba(255,226,174,.42) 205deg 209deg,transparent 210deg 294deg,rgba(255,247,211,.55) 295deg 299deg,transparent 300deg);animation:speed-flash 4000ms ease both; }
+    .stage.is-transitioning[data-effect="teleport"] .fx__portal { visibility:visible; }
+    .stage.is-transitioning[data-effect="teleport"] .fx__portal-window { animation:portal-window 4000ms cubic-bezier(.18,.78,.18,1) both; }
+    .stage.is-transitioning[data-effect="teleport"] .fx__portal-vortex { animation:portal-spin 1100ms linear infinite; }
+    .stage.is-transitioning[data-effect="teleport"] .fx__portal-vortex::before { animation:portal-spin-reverse 1700ms linear infinite; }
+    .stage.is-transitioning[data-effect="teleport"] .fx__portal-vortex::after { animation:portal-spin 850ms linear infinite; }
+    .stage.is-transitioning[data-effect="teleport"] .fx__portal-core { animation:portal-core 1250ms ease-in-out infinite alternate; }
+    .stage.is-transitioning[data-effect="teleport"] .fx__flash { background:conic-gradient(from 18deg at 50% 50%,transparent 0deg 28deg,rgba(228,255,178,.46) 29deg 33deg,transparent 34deg 82deg,rgba(179,255,137,.28) 83deg 87deg,transparent 88deg 154deg,rgba(228,255,178,.4) 155deg 159deg,transparent 160deg 244deg,rgba(179,255,137,.3) 245deg 249deg,transparent 250deg);animation:teleport-flash 4000ms ease both; }
+    .stage.is-transitioning[data-effect="assemble"] .fx__tile { opacity:1;background-repeat:no-repeat;animation:assemble-tile 4000ms cubic-bezier(.2,.8,.2,1) both; }
+    .stage.is-transitioning[data-effect="assemble"] .fx__flash { background:linear-gradient(130deg,transparent 25%,rgba(255,255,255,.8),transparent 68%);animation:assembly-glint 4000ms ease both; }
+    .stage.is-transitioning[data-effect="fold"] .fx__field { background:linear-gradient(135deg,#e8d4b8 0 49.7%,#ae8865 50%,#f5e7d3 50.5% 100%);clip-path:polygon(0 0,100% 0,100% 0,50% 0,0 0);transform-origin:top;animation:paper-fold 4000ms cubic-bezier(.68,0,.25,1) both;box-shadow:0 25px 60px rgba(0,0,0,.6); }
+    .stage.is-transitioning[data-effect="wave"] .fx__field { background:repeating-linear-gradient(166deg,transparent 0 27px,rgba(188,235,229,.72) 29px 32px,transparent 34px 53px),linear-gradient(180deg,transparent 0 18%,#bcebe5 19%,#368e91 42%,#144e58 82%);clip-path:polygon(0 38%,18% 31%,34% 37%,51% 26%,69% 34%,84% 24%,100% 32%,100% 100%,0 100%);animation:tidal-wave 4000ms cubic-bezier(.45,0,.25,1) both; }
+    .stage.is-transitioning[data-effect="petal"] .fx__field { background:repeating-conic-gradient(from 15deg at 50% 50%,#612e50 0deg 12deg,#d99aad 13deg 17deg,#47263f 18deg 29deg);clip-path:polygon(50% 0,58% 35%,90% 10%,70% 43%,100% 50%,66% 59%,90% 90%,58% 67%,50% 100%,42% 67%,10% 90%,34% 59%,0 50%,34% 43%,10% 10%,42% 35%);animation:petal-spin 4000ms cubic-bezier(.3,.7,.2,1) both; }
+    .stage.is-transitioning[data-effect="rain"] .fx__field { background:repeating-linear-gradient(105deg,transparent 0 14px,rgba(255,226,203,.85) 15px 17px,transparent 18px 34px),linear-gradient(135deg,#593e38,#17191d);animation:rain-wash 4000ms ease both; }
+    .stage.is-transitioning[data-effect="neon"] .fx__field { inset:-20%;background:repeating-linear-gradient(0deg,transparent 0 72px,rgba(255,119,195,.9) 74px 77px,transparent 79px 144px),repeating-linear-gradient(90deg,transparent 0 95px,rgba(99,240,231,.76) 97px 100px,transparent 102px 190px);transform:perspective(500px) rotateX(55deg) scale(1.8);animation:neon-grid 4000ms cubic-bezier(.4,0,.2,1) both; }
+    .stage.is-transitioning[data-effect="stars"] .fx__field { background:conic-gradient(from 18deg at 50% 50%,#fff,#c5baff 12%,#34305e 28%,#141426 48%,#34305e 68%,#c5baff 84%,#fff);clip-path:polygon(50% 0,59% 39%,100% 50%,59% 61%,50% 100%,41% 61%,0 50%,41% 39%);animation:star-warp 4000ms cubic-bezier(.2,.8,.2,1) both; }
+    .stage.is-transitioning[data-effect="sunrise"] .fx__field { background:linear-gradient(0deg,#fffbe1 0 7%,#ffe1a5 19%,#eeb783 42%,#a56d67 72%,transparent 100%);clip-path:polygon(0 100%,0 72%,8% 70%,8% 64%,19% 64%,19% 57%,31% 57%,31% 49%,42% 49%,42% 39%,53% 39%,53% 29%,65% 29%,65% 19%,77% 19%,77% 10%,88% 10%,88% 0,100% 0,100% 100%);animation:sunrise 4000ms cubic-bezier(.55,0,.25,1) both; }
+    @keyframes arrive { 0%{opacity:0;transform:translateY(48px) scale(.94);filter:blur(8px)} 55%{opacity:1;filter:blur(0)} 78%{transform:translateY(-5px) scale(1.01)} 100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)} }
+    @keyframes star-turn { to{transform:rotate(360deg)} }
+    @keyframes orbit { to{transform:translateY(-50%) rotate(360deg)} }
+    @keyframes tunnel-run { 0%{opacity:0;transform:scale(.025) rotate(-22deg)} 12%{opacity:1} 43%{opacity:1;transform:scale(1.35) rotate(5deg)} 58%{opacity:.94;transform:scale(2.2) rotate(0)} 100%{opacity:0;transform:scale(6) rotate(18deg)} }
+    @keyframes speed-flash { 0%,100%{opacity:0} 16%{opacity:.1} 45%{opacity:.85} 53%{opacity:.34} 62%{opacity:.7} 70%{opacity:0} }
+    @keyframes teleport-rings { 0%{opacity:0;transform:scale(.12) rotate(0);filter:blur(10px)} 18%{opacity:1} 42%{opacity:.9;transform:scale(1.06) rotate(140deg);filter:blur(0)} 58%{opacity:.8;transform:scale(.96) rotate(200deg)} 100%{opacity:0;transform:scale(1.8) rotate(360deg);filter:blur(12px)} }
+    @keyframes teleport-flash { 0%,100%{opacity:0} 25%{opacity:.3} 39%{opacity:.96} 46%{opacity:.18} 53%{opacity:.8} 65%{opacity:0} }
+    @keyframes portal-window { 0%{opacity:0;transform:scale(.025) rotate(-16deg)} 12%{opacity:1;transform:scale(.18) rotate(-8deg)} 35%{opacity:1;transform:scale(1.04) rotate(2deg)} 48%,60%{opacity:1;transform:scale(1) rotate(0)} 78%{opacity:.9;transform:scale(.92) rotate(-2deg)} 100%{opacity:0;transform:scale(.015) rotate(20deg)} }
+    @keyframes portal-spin { to{transform:rotate(360deg)} }
+    @keyframes portal-spin-reverse { to{transform:rotate(-360deg)} }
+    @keyframes portal-core { from{transform:translate(-50%,-50%) rotate(45deg) scale(.82);filter:brightness(.8)} to{transform:translate(-50%,-50%) rotate(225deg) scale(1.12);filter:brightness(1.5)} }
+    @keyframes assemble-tile { 0%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--turn)) scale(.65);filter:brightness(2)} 18%{opacity:1} 43%{opacity:1;transform:translate(0,0) rotate(0) scale(1);filter:brightness(1.45)} 58%{opacity:1;transform:translate(0,0) rotate(0) scale(1)} 83%{opacity:.9;filter:brightness(1.2)} 100%{opacity:0;transform:translate(calc(var(--dx) * -.2),calc(var(--dy) * -.2)) scale(1.04);filter:brightness(1)} }
+    @keyframes assembly-glint { 0%,100%{opacity:0;transform:translateX(-110%)} 38%{opacity:0} 52%{opacity:1;transform:translateX(110%)} 64%{opacity:0;transform:translateX(145%)} }
+    @keyframes paper-fold { 0%{opacity:0;clip-path:polygon(0 0,0 0,0 0,0 0,0 0);transform:rotateX(-78deg)} 30%{opacity:1;clip-path:polygon(0 0,100% 0,100% 0,50% 50%,0 0);transform:rotateX(-20deg)} 49%,62%{opacity:1;clip-path:polygon(0 0,100% 0,100% 100%,50% 100%,0 100%);transform:rotateX(0)} 100%{opacity:0;clip-path:polygon(0 0,100% 0,100% 0,50% 0,0 0);transform:rotateX(58deg)} }
+    @keyframes tidal-wave { 0%{opacity:0;transform:translateY(110%) scaleX(.65)} 28%{opacity:1;transform:translateY(10%) scaleX(1.12)} 48%,62%{opacity:1;transform:translateY(-4%) scaleX(1)} 82%{opacity:.8;transform:translateY(-30%) scaleX(1.15)} 100%{opacity:0;transform:translateY(-120%) scaleX(1.4)} }
+    @keyframes petal-spin { 0%{opacity:0;transform:scale(.08) rotate(-35deg)} 20%{opacity:1;transform:scale(.7) rotate(28deg)} 46%,61%{opacity:1;transform:scale(2.5) rotate(170deg)} 82%{opacity:.85;transform:scale(2.9) rotate(270deg)} 100%{opacity:0;transform:scale(4) rotate(360deg)} }
+    @keyframes rain-wash { 0%{opacity:0;transform:translateY(-110%)} 25%{opacity:1;transform:translateY(-12%)} 47%,62%{opacity:1;transform:translateY(0)} 83%{opacity:.8;transform:translateY(8%)} 100%{opacity:0;transform:translateY(110%)} }
+    @keyframes neon-grid { 0%{opacity:0;transform:perspective(500px) rotateX(55deg) scale(3) translateY(55%)} 25%{opacity:1} 48%,62%{opacity:1;transform:perspective(500px) rotateX(55deg) scale(1.3) translateY(0)} 84%{opacity:.72;transform:perspective(500px) rotateX(55deg) scale(1) translateY(-5%)} 100%{opacity:0;transform:perspective(500px) rotateX(55deg) scale(.65) translateY(-30%)} }
+    @keyframes star-warp { 0%{opacity:0;transform:scale(.02) rotate(0)} 23%{opacity:1} 46%,62%{opacity:1;transform:scale(1.5) rotate(180deg)} 84%{opacity:.8;transform:scale(1.8) rotate(300deg)} 100%{opacity:0;transform:scale(4) rotate(420deg)} }
+    @keyframes sunrise { 0%{opacity:0;transform:translateY(100%) scaleY(.7)} 30%{opacity:1;transform:translateY(12%) scaleY(1)} 48%,63%{opacity:1;transform:translateY(0) scaleY(1)} 82%{opacity:.8;transform:translateY(-18%) scaleY(1.1)} 100%{opacity:0;transform:translateY(-110%) scaleY(1.3)} }
+    @media(max-width:760px) {
+      .stage{min-height:540px}.topbar{padding:20px 22px}.topbar__note{font-size:10px}
+      .chapter,.chapter--intro,.chapter--split{padding:88px 25px 100px}.chapter__content,.chapter--split .chapter__content{width:100%}
+      h1,.chapter--intro h1,.chapter--split h1,.chapter--final h1{font-size:47px}.chapter--letter .chapter__content{padding:25px 23px}.chapter--letter h1{font-size:43px}
+      .chapter__copy{margin-top:18px;font-size:15px;line-height:1.72}.eyebrow{margin-bottom:20px;font-size:10px;letter-spacing:1.8px}.actions{margin-top:25px}
+      .ornament{right:-95px;top:17%;width:190px;opacity:.55}.chapter--sea .ornament{right:-100px;width:220px}.chapter--city .ornament{right:-45px;width:155px}.chapter--ending .ornament{right:-75px;width:210px}
+      .bottom{padding:14px 21px 19px}.progress{gap:3px}.progress__step{width:15px}.progress__step::after{width:12px}.keyboard-hint{display:none}
+    }
+    @media(max-width:390px){h1,.chapter--intro h1,.chapter--split h1,.chapter--final h1{font-size:41px}.chapter--letter h1{font-size:37px}.chapter__copy{font-size:14px}.progress__step{width:12px}.progress__step::after{width:10px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <main class="stage" id="stage" data-chapter="1" data-effect="speed" aria-live="polite">
+    <div class="backdrop" aria-hidden="true"><img id="backdrop-image" src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&amp;fit=crop&amp;w=2200&amp;q=85" alt=""></div>
+    <div class="grain" aria-hidden="true"></div>
+    <header class="topbar"><div class="wordmark"><span class="wordmark__star" aria-hidden="true">✳</span><span>Тебе.</span></div><div class="topbar__note">Маленькое путешествие для большой души</div></header>
+    <section class="chapter chapter--intro" id="chapter" aria-labelledby="chapter-title"><div class="chapter__content" id="chapter-content"></div></section>
+    <footer class="bottom"><nav class="progress" id="progress" aria-label="Главы путешествия"></nav><span class="keyboard-hint">← → листать главы</span><div class="counter"><strong id="current-number">01</strong><span>/</span><span>10</span></div></footer>
+    <div class="fx" id="fx" aria-hidden="true"><div class="fx__field"></div><div class="fx__flash"></div><div class="fx__tiles" id="tiles"></div><div class="fx__portal"><div class="fx__portal-window"><div class="fx__portal-vortex"></div><div class="fx__portal-core"></div></div></div></div>
+  </main>
+  <script>
+    const chapters = [
+      { eyebrow:"Одно маленькое путешествие", title:"Это всё — <em>тебе.</em>", copy:"Не потому, что сегодня какой-то особенный день. А потому, что иногда самые важные слова слишком долго ждут своего часа. Здесь их целых десять глав — открывай не спеша.", signature:"Начнём?", button:"Открыть первую главу", image:"photo-1470770841072-f978cf4d019e", layout:"intro", effect:"speed", label:"пролог" },
+      { eyebrow:"Глава первая · тихое утро", title:"С тобой даже обычный день — <em>особенный.</em>", copy:"В мире так много вещей, которые пытаются удивить. Громких, блестящих, невероятных. Но есть что-то совсем другое в том, как ты замечаешь маленькие детали, как смеёшься в самый неподходящий момент и как одним своим присутствием делаешь всё вокруг чуть теплее.", copy2:"Мне кажется, это и есть настоящее волшебство: не громкое, а такое, которое хочется беречь.", image:"photo-1470252649378-9c29740c9fa8", layout:"split garden", effect:"teleport", label:"утро" },
+      { eyebrow:"Глава вторая · письмо от руки", title:"Я хочу, чтобы ты знала…", copy:"Тебе не нужно быть сильной каждую минуту. Не нужно всё успевать, всем нравиться или знать ответы заранее. Ты можешь уставать, передумывать, начинать заново, менять маршрут. От этого ты не становишься менее удивительной. Ни на чуточку.", copy2:"Пожалуйста, разговаривай с собой хотя бы так же нежно, как ты разговариваешь с теми, кого любишь.", signature:"С теплом, всегда", image:"photo-1476231682828-37e571bc172f", layout:"letter", effect:"assemble", label:"письмо" },
+      { eyebrow:"Глава третья · твой внутренний свет", title:"Ты сияешь, даже когда <em>не замечаешь.</em>", copy:"В тебе есть редкое сочетание: мягкость, которая не означает слабость, и смелость, которой не нужно ничего доказывать. Ты умеешь слушать, чувствовать и продолжать идти, даже когда путь пока не очень понятен.", copy2:"И да — твоё присутствие замечают. Тебя ценят. Тобой восхищаются. Просто пусть сегодня кто-нибудь скажет это вслух.", image:"photo-1519681393784-d120267933ba", layout:"center", effect:"stars", label:"звёзды" },
+      { eyebrow:"Глава четвёртая · берег без расписания", title:"Можно просто <em>выдохнуть.</em>", copy:"Представь, что сейчас ты у моря. Воздух солёный, волны никуда не торопятся, а тебе совершенно не нужно быть продуктивной, собранной или полезной. Можно просто стоять. Смотреть. Дышать. Быть собой — этого уже достаточно.", copy2:"Пусть у тебя всегда будет место, где можно снять все невидимые доспехи.", image:"photo-1500375592092-40eb2168fd21", layout:"split sea", effect:"wave", label:"море" },
+      { eyebrow:"Глава пятая · цветы для тебя", title:"Ты не обязана расцветать по <em>расписанию.</em>", copy:"У каждого цветка своё время. Кто-то распускается первым, кто-то ждёт солнца, а кому-то нужно пережить целую зиму, прежде чем показать миру свою красоту. С тобой всё точно так же: твой темп правильный, даже если он не похож на чей-то ещё.", copy2:"Пожалуйста, не торопи себя. В тебе уже есть всё, чтобы вырасти во что-то прекрасное.", image:"photo-1490750967868-88aa4486c946", layout:"center garden", effect:"petal", label:"цветы" },
+      { eyebrow:"Глава шестая · вечер дома", title:"Пусть мир будет <em>добрым к тебе.</em>", copy:"Пусть в конце длинного дня найдётся любимая кружка, мягкий плед, знакомая музыка и человек, которому не придётся объяснять, почему тебе немного грустно. Пусть хорошие новости приходят чаще плохих, а сложные вещи оказываются чуть легче, чем казались сначала.", copy2:"И пусть у тебя всегда будет повод подумать: «Как хорошо, что этот день закончился именно так».", image:"photo-1445116572660-236099ec97a0", layout:"letter", effect:"rain", label:"уют" },
+      { eyebrow:"Глава седьмая · огни большого города", title:"Сколько дорог — и все они могут стать <em>твоими.</em>", copy:"Впереди ещё столько историй, мест, случайных встреч и решений, о которых пока не знаешь. Не обязательно сразу видеть весь маршрут. Достаточно следующего шага. Потом ещё одного. А иногда можно свернуть куда-то неожиданно — вдруг именно там тебя ждёт что-нибудь чудесное.", copy2:"Я верю, что впереди у тебя много поводов удивиться тому, как красиво всё сложится.", image:"photo-1519608487953-e999c86e7455", layout:"split city", effect:"neon", label:"дороги" },
+      { eyebrow:"Глава восьмая · где-то среди звёзд", title:"В огромной вселенной есть только <em>одна ты.</em>", copy:"Со всеми твоими мечтами, странными привычками, любимыми песнями, тихими надеждами и тем особенным способом смотреть на мир, который невозможно перепутать ни с чьим другим. Ты не должна уменьшать себя, чтобы другим было удобнее. Твоё место в этой вселенной принадлежит тебе.", copy2:"Пожалуйста, никогда не забывай: ты — не запасной вариант собственной жизни. Ты её главная история.", image:"photo-1462331940025-496dfbfc7564", layout:"center", effect:"fold", label:"вселенная" },
+      { eyebrow:"Глава девятая · последнее письмо", title:"Ты — уже <em>достаточно.</em>", copy:"Не будущая версия себя, которая наконец всё сделала. Не идеальная, безошибочная, всегда сияющая. А ты — настоящая. Сегодня. Со всем, что уже получилось, и со всем, что ещё только начинается.", copy2:"Завтра принесёт новые маленькие радости и, может быть, большие перемены. Тебе не нужно заслуживать право на счастье: пусть всё тепло, которое ты даришь этому миру, однажды вернётся к тебе — вдвойне, а лучше втройне. Спасибо, что ты есть. Пусть это письмо останется рядом на тот день, когда тебе понадобится об этом напомнить.", signature:"Ты замечательная. Просто так.", image:"photo-1464822759023-fed622ff2c3b", layout:"center final", effect:"sunrise", label:"для тебя", button:"Прочитать ещё раз" }
+    ];
+
+    const stage = document.getElementById("stage");
+    const chapterSection = document.getElementById("chapter");
+    const chapterContent = document.getElementById("chapter-content");
+    const backdropImage = document.getElementById("backdrop-image");
+    const progress = document.getElementById("progress");
+    const number = document.getElementById("current-number");
+    const tiles = document.getElementById("tiles");
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const transitionDuration = reducedMotion ? 50 : 1800;
+    let current = 0;
+    let locked = false;
+
+    function render(index) {
+      const item = chapters[index];
+      const last = index === chapters.length - 1;
+      const signature = item.signature ? `<p class="chapter__signature">${item.signature}</p>` : "";
+      const secondCopy = item.copy2 ? `<p class="chapter__copy">${item.copy2}</p>` : "";
+      chapterSection.className = `chapter chapter--${item.layout}`;
+      chapterContent.innerHTML = `<p class="eyebrow">${item.eyebrow}</p><h1 id="chapter-title">${item.title}</h1><p class="chapter__copy">${item.copy}</p>${secondCopy}${signature}<div class="actions">${index ? '<button class="button button--quiet" type="button" data-action="previous">Назад</button>' : ""}<button class="button button--primary" type="button" data-action="${last ? "restart" : "next"}">${item.button || "Следующая глава"}<span class="button__arrow" aria-hidden="true">${last ? "↺" : "→"}</span></button></div>`;
+      chapterContent.classList.remove("is-arriving");
+      void chapterContent.offsetWidth;
+      chapterContent.classList.add("is-arriving");
+      backdropImage.src = `https://images.unsplash.com/${item.image}?auto=format&fit=crop&w=2200&q=85`;
+      stage.dataset.chapter = String(index + 1);
+      number.textContent = String(index + 1).padStart(2, "0");
+      [...progress.children].forEach((button, buttonIndex) => {
+        button.classList.toggle("is-current", buttonIndex === index);
+        button.classList.toggle("is-done", buttonIndex < index);
+        buttonIndex === index ? button.setAttribute("aria-current", "step") : button.removeAttribute("aria-current");
+      });
+      document.title = `${item.label} — Тебе.`;
+    }
+
+    function makeTiles(image) {
+      tiles.replaceChildren();
+      for (let index = 0; index < 16; index++) {
+        const tile = document.createElement("div");
+        const column = index % 4;
+        const row = Math.floor(index / 4);
+        const angle = Math.random() * 70 - 35;
+        tile.className = "fx__tile";
+        tile.style.backgroundImage = `url("https://images.unsplash.com/${image}?auto=format&fit=crop&w=1800&q=80")`;
+        tile.style.backgroundSize = "400% 400%";
+        tile.style.backgroundPosition = `${column * 33.333}% ${row * 33.333}%`;
+        tile.style.setProperty("--dx", `${(Math.random() > .5 ? 1 : -1) * (40 + Math.random() * 70)}vw`);
+        tile.style.setProperty("--dy", `${(Math.random() > .5 ? 1 : -1) * (30 + Math.random() * 60)}vh`);
+        tile.style.setProperty("--turn", `${angle}deg`);
+        tiles.append(tile);
+      }
+    }
+
+    function goTo(index) {
+      if (locked || index < 0 || index >= chapters.length || index === current) return;
+      locked = true;
+      const next = chapters[index];
+      stage.dataset.effect = "";
+      void stage.offsetWidth;
+      stage.dataset.effect = next.effect;
+      stage.classList.add("is-transitioning");
+      chapterSection.classList.add("is-leaving");
+      if (next.effect === "assemble") makeTiles(next.image);
+      window.setTimeout(() => {
+        current = index;
+        render(current);
+        chapterSection.classList.remove("is-leaving");
+        backdropImage.classList.add("is-changing");
+        window.setTimeout(() => backdropImage.classList.remove("is-changing"), 700);
+      }, Math.round(transitionDuration * .42));
+      window.setTimeout(() => {
+        stage.classList.remove("is-transitioning");
+        locked = false;
+      }, transitionDuration);
+    }
+
+    chapters.forEach((item, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "progress__step";
+      button.setAttribute("aria-label", `Глава ${index + 1}: ${item.label}`);
+      button.addEventListener("click", () => goTo(index));
+      progress.append(button);
+    });
+    chapterContent.addEventListener("click", event => {
+      const action = event.target.closest("[data-action]")?.dataset.action;
+      if (action === "next") goTo(current + 1);
+      if (action === "previous") goTo(current - 1);
+      if (action === "restart") goTo(0);
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "ArrowRight") goTo(current + 1);
+      if (event.key === "ArrowLeft") goTo(current - 1);
+    });
+    render(current);
+  </script>
+</body>
+</html>
